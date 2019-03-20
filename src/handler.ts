@@ -16,6 +16,7 @@ export class Handler {
         this.team.append(member)
       });
     }
+    console.log("Members: " + members)
   }
 
   public async handlePullRequest(context: Context): Promise<void> {
@@ -43,6 +44,7 @@ export class Handler {
       context.log('there is no candidate to review')
       return
     }
+    console.log("candidate to be assigned: " + reviewer)
 
     let result: any
     try {
