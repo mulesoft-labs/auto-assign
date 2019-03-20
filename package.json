@@ -1,0 +1,49 @@
+{
+  "name": "auto-assign",
+  "version": "1.0.0",
+  "description": "A Probot app that adds reviewers to pull requests when pull requests are opened.",
+  "author": "Guido Tamborindeguy <guido@tamborindeguy.com.ar>",
+  "repository": "https://github.com/guidota/auto-assign.git",
+  "homepage": "https://github.com/guidota/auto-assign",
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "nodemon --exec \"npm start\"",
+    "start": "npm run build && probot run ./lib/index.js",
+    "lint": "tslint --project test",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.119",
+    "@types/node": "^10.12.18",
+    "lodash": "^4.17.11",
+    "probot": "^7.5.0",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.0",
+    "coveralls": "^3.0.2",
+    "jest": "^24.1.0",
+    "nodemon": "^1.17.2",
+    "smee-client": "^1.0.2",
+    "standard": "^10.0.3",
+    "ts-jest": "^24.0.0",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-config-standard": "^7.1.0",
+    "tslint-eslint-rules": "^5.4.0"
+  },
+  "engines": {
+    "node": ">= 8.3.0"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  }
+}
