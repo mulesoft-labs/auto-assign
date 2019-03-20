@@ -29,6 +29,7 @@ export class Handler {
     }
 
     this.validateMembers(config.teamMembers)
+    context.log(config.teamMembers)
 
     const payload = context.payload
     const owner = payload.pull_request.user.login
