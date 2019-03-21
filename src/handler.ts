@@ -29,7 +29,7 @@ export class Handler {
     }
 
     this.validateMembers(config.teamMembers)
-    context.log(config.teamMembers)
+    console.log("members: " + config.teamMembers)
 
     const payload = context.payload
     const owner = payload.pull_request.user.login
@@ -49,10 +49,16 @@ export class Handler {
 
     let result: any
     try {
-      const params = context.issue({
+      const addReviewer = context.issue({
         reviewers: [reviewer]
       })
-      result = await context.github.pullRequests.createReviewRequest(params)
+      result = await context.github.pullRequests.createReviewRequest(addReviewer)
+      context.log(result)
+
+      const addAssignees = context.issue({
+        assignees: [reviewer]
+      })
+      result = await context.github.issues.addAssignees(addAssignees)
       context.log(result)
     } catch (error) {
       context.log(error)
