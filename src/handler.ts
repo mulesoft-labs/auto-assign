@@ -29,7 +29,6 @@ export class Handler {
     }
 
     this.validateMembers(config.teamMembers)
-    console.log("members: " + config.teamMembers)
 
     const payload = context.payload
     const owner = payload.pull_request.user.login
@@ -55,8 +54,9 @@ export class Handler {
       // result = await context.github.pullRequests.createReviewRequest(addReviewer)
       // context.log(result)
       
-      result = context.github.issues.checkAssignee(context.issue({assignee: reviewer}))
-      context.log(result)
+      context.log('available assignees: ' + await context.github.issues.listAssignees(context.issue()))
+
+      context.log(await context.github.issues.checkAssignee(context.issue({assignee: reviewer})))
       const currentAssignee = context.issue({
         assignees: [reviewer]
       })
