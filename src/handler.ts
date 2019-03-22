@@ -49,16 +49,16 @@ export class Handler {
 
     let result: any
     try {
-      const addReviewer = context.issue({
-        reviewers: [reviewer]
-      })
-      result = await context.github.pullRequests.createReviewRequest(addReviewer)
-      context.log(result)
+      // const addReviewer = context.issue({
+      //   reviewers: [reviewer]
+      // })
+      // result = await context.github.pullRequests.createReviewRequest(addReviewer)
+      // context.log(result)
 
       const addAssignees = context.issue({
         assignees: [reviewer]
       })
-      
+
       result = await context.github.issues.addAssignees(addAssignees)
       context.log(result)
     } catch (error) {
