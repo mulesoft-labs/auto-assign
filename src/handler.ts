@@ -54,14 +54,19 @@ export class Handler {
       // result = await context.github.pullRequests.createReviewRequest(addReviewer)
       // context.log(result)
       
-      context.log('available assignees: ' + await context.github.issues.listAssignees(context.issue()))
+      context.log('available assignees: ') 
+      result = await context.github.issues.listAssignees(context.issue())
+      context.log(result)
 
-      context.log(await context.github.issues.checkAssignee(context.issue({assignee: reviewer})))
+      result = await context.github.issues.checkAssignee(context.issue({assignee: reviewer}))
+      context.log(result)
+
       const currentAssignee = context.issue({
         assignees: [reviewer]
       })
       result = await context.github.issues.addAssignees(currentAssignee)
       context.log(result)
+      
     } catch (error) {
       context.log(error)
     }
