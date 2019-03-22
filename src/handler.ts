@@ -58,6 +58,7 @@ export class Handler {
       const addAssignees = context.issue({
         assignees: [reviewer]
       })
+      
       result = await context.github.issues.addAssignees(addAssignees)
       context.log(result)
     } catch (error) {
