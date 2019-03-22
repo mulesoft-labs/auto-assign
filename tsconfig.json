@@ -15,6 +15,7 @@
     "skipLibCheck": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
+    "strictNullChecks": false,
     "declaration": true
   },
   "include": [
