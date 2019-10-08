@@ -9,7 +9,7 @@ interface AppConfig {
 
 const queryAssignables = `
   query assignables{
-    repository {
+    repository($name: String!, $owner: String!) {
       assignableUsers {
         nodes {
           user {
@@ -55,6 +55,8 @@ export class Handler {
     try {
       const payload = context.payload
       const owner = payload.pull_request.user.login
+      const repoName = payload.repository.name;
+      const repoOwner = payload.repository.owner.name;
       const labels = payload.pull_request.labels
 
       if (config.skipKeywords && includesSkipKeywords(labels, config.skipKeywords)) {
@@ -71,10 +73,13 @@ export class Handler {
 
       let result: any
 
-      let assignablesResponse = context.github.query(queryAssignables)
+      let assignablesResponse = context.github.query(queryAssignables, {
+        name: repoName,
+        owner: repoOwner,
+      })
       context.log(assignablesResponse)
 
-      
+
       context.github.query(addAssignee, {
         id: context.payload.issue.node_id,
         assigneeIds: [reviewer]
