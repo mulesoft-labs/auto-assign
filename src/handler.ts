@@ -7,6 +7,14 @@ interface AppConfig {
   skipKeywords?: string[]
 }
 
+const addAssignee = `
+  mutation assign($id: ID!, $assigneeIds: [ID!]!) {
+    addAssigneesToAssignable(input: {assignableId: $id, assigneeIds: $assigneeIds}) {
+      clientMutationId
+    }
+  }
+`
+
 export class Handler {
   team: Team<string> = new Team<string>();
 
@@ -61,10 +69,16 @@ export class Handler {
       result = await context.github.issues.checkAssignee(context.issue({assignee: reviewer}))
       context.log(result)
 
-      const currentAssignee = context.issue({
-        assignees: [reviewer]
+      // const currentAssignee = context.issue({
+      //   assignees: [reviewer]
+      // })
+      // result = await context.github.issues.addAssignees(currentAssignee)
+
+      context.github.query(addAssignee, {
+        id: context.payload.issue.node_id,
+        assigneeIds: [reviewer]
       })
-      result = await context.github.issues.addAssignees(currentAssignee)
+
       context.log(result)
       
     } catch (error) {
