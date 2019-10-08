@@ -7,6 +7,21 @@ interface AppConfig {
   skipKeywords?: string[]
 }
 
+const queryAssignables = `
+  query assignables{
+    repository {
+      assignableUsers {
+        nodes {
+          user {
+            id,
+            name
+          }
+        }
+      }
+    }
+  }
+`
+
 const addAssignee = `
   mutation assign($id: ID!, $assigneeIds: [ID!]!) {
     addAssigneesToAssignable(input: {assignableId: $id, assigneeIds: $assigneeIds}) {
@@ -37,50 +52,36 @@ export class Handler {
     }
 
     this.validateMembers(config.teamMembers)
-
-    const payload = context.payload
-    const owner = payload.pull_request.user.login
-    const labels = payload.pull_request.labels
-
-    if (config.skipKeywords && includesSkipKeywords(labels, config.skipKeywords)) {
-      context.log('skips adding reviewers')
-      return
-    }
-
-    let reviewer = this.team.next(owner)
-    if (!reviewer) {
-      context.log('there is no candidate to review')
-      return
-    }
-    console.log("candidate to be assigned: " + reviewer)
-
-    let result: any
     try {
-      // const addReviewer = context.issue({
-      //   reviewers: [reviewer]
-      // })
-      // result = await context.github.pullRequests.createReviewRequest(addReviewer)
-      // context.log(result)
+      const payload = context.payload
+      const owner = payload.pull_request.user.login
+      const labels = payload.pull_request.labels
+
+      if (config.skipKeywords && includesSkipKeywords(labels, config.skipKeywords)) {
+        context.log('skips adding reviewers')
+        return
+      }
+
+      let reviewer = this.team.next(owner)
+      if (!reviewer) {
+        context.log('there is no candidate to review')
+        return
+      }
+      console.log("candidate to be assigned: " + reviewer)
+
+      let result: any
+
+      let assignablesResponse = context.github.query(queryAssignables)
+      context.log(assignablesResponse)
+
       
-      context.log('available assignees: ') 
-      result = await context.github.issues.listAssignees(context.issue())
-      context.log(result)
-
-      result = await context.github.issues.checkAssignee(context.issue({assignee: reviewer}))
-      context.log(result)
-
-      // const currentAssignee = context.issue({
-      //   assignees: [reviewer]
-      // })
-      // result = await context.github.issues.addAssignees(currentAssignee)
-
       context.github.query(addAssignee, {
         id: context.payload.issue.node_id,
         assigneeIds: [reviewer]
       })
 
       context.log(result)
-      
+
     } catch (error) {
       context.log(error)
     }
