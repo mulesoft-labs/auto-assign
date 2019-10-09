@@ -21,10 +21,10 @@ export class Handler {
     if (this.teams.has(repo)) {
       team = this.teams.get(repo)
       if (team.length() != config.teamMembers.length) {
-        this.fillTeam(config, repo)
+        team = this.fillTeam(config, repo)
       }
     } else {
-      this.fillTeam(config, repo)
+      team = this.fillTeam(config, repo)
     }
 
     const payload = context.payload
@@ -40,11 +40,12 @@ export class Handler {
     team.proceed()
   }
 
-  private fillTeam(config: AppConfig, repo: string) {
+  private fillTeam(config: AppConfig, repo: string): Team<string> {
     let team = new Team<string>()
     config.teamMembers.forEach(member => {
       team.append(member);
     });
     this.teams.set(repo, team)
+    return team
   }
 }
