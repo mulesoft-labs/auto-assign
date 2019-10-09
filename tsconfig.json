@@ -9,7 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "pretty": true,
-    "strict": true,
+    "strict": false,
     "sourceMap": true,
     "outDir": "./lib",
     "skipLibCheck": true,
