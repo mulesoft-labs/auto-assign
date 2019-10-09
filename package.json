@@ -23,7 +23,7 @@
     "@types/node": "^10.12.18",
     "lodash": "^4.17.11",
     "probot": "^9.5.1",
-    "typescript": "^3.2.2"
+    "typescript": "3.2.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.0",
@@ -39,7 +39,8 @@
     "tslint-eslint-rules": "^5.4.0"
   },
   "engines": {
-    "node": "12.10.0"
+    "node": "12.10.0",
+    "npm": "6.11.3"
   },
   "jest": {
     "globals": {
