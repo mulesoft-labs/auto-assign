@@ -5,3 +5,4 @@ lib/
 .env.example
 .vscode/
 package-lock.json
+*.pem

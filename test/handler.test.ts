@@ -22,43 +22,6 @@ describe('handlePullRequest', () => {
     expect(spy.mock.calls[0][0]).toEqual('skips adding reviewers')
   })
 
-  test('assign other when owner is the next in the list', async () => {
-    const handler = new Handler()
-    let context = createPRContext('reviewer1', ['WIP'], [])
-    let createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
-    await handler.handlePullRequest(context)
-
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(1)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).not.toMatch('reviewer1')
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch('reviewer2')
-
-    
-    context = createPRContext('reviewer2', ['WIP'], [])
-    createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
-    await handler.handlePullRequest(context)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch('reviewer1')
-
-    context = createPRContext('reviewer1', ['WIP'], [])
-    createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
-    await handler.handlePullRequest(context)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch('reviewer3')
-
-    context = createPRContext('reviewer1', ['WIP'], [])
-    createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
-    await handler.handlePullRequest(context)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch('reviewer2')
-
-    context = createPRContext('reviewer1', ['WIP'], [])
-    createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
-    await handler.handlePullRequest(context)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch('reviewer3')
-
-    context = createPRContext('reviewer3', ['WIP'], [])
-    createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
-    await handler.handlePullRequest(context)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch('reviewer1')
-  })
-
 })
 
 function createPRContext(reviewer: string, labels: string[], skipWords: string[]) : Context {
