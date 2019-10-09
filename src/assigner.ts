@@ -31,13 +31,6 @@ export class Assigner {
             const payload = this.context.payload
             const owner = payload.pull_request.user.login
 
-            var repo_name: String = payload.repository.full_name;
-            repo_name = repo_name.substring(repo_name.indexOf('/') + 1, repo_name.length)
-            const repo_owner = payload.repository.owner.login;
-
-            this.context.log("Repo Name: " + repo_name)
-            this.context.log("Repo Owner:" + repo_owner)
-
             let reviewer = team.next(owner)
             if (!reviewer) {
                 this.context.log('there is no candidate to review')
