@@ -3,8 +3,9 @@ export class Team<T> {
   private _head?: Node<T>;
   private _length: number;
 
-  constructor() {
-    this._length = 0;
+  constructor(array: T[]) {
+    this._length = 0
+    array.forEach(t => this.append(t))
   }
 
   next(owner?: T): T | undefined {
@@ -27,15 +28,25 @@ export class Team<T> {
     }
   }
 
-  length() : number {
+  length(): number {
     return this._length;
+  }
+
+  public toArray() : T[] {
+    var result : T[] = []
+    var node = this._head
+    for (let i = 0; i < this._length; i++) {
+      result.push(node.value)
+      node = node.next
+    }
+    return result
   }
 
   private swapFirstTwo() {
     if (this._head) {
       let a = this._head;
       this._head = this._head.next;
-      this.remove(a);
+      this.unlink(a);
       this.insertBetween(a, this._head, this._head.next);
     }
   }
@@ -55,13 +66,50 @@ export class Team<T> {
     return true;
   }
 
-  private remove(node: Node<T>) {
+  public toBack(t: T) {
+    if (this.contains(t)) {
+      this.remove(t);
+      this.append(t);
+    }
+  }
+
+  private get(t: T): Node<T> | undefined {
+    let node = this._head;
+    for (let i = 0; i < this._length; i++) {
+      if (node) {
+        if (node.value === t) {
+          return node;
+        } else {
+          node = node.next;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  public remove(val: T) {
+    if (this.contains(val)) {
+      var del = this.get(val)
+      if (this._length == 1) {
+        this._head = null
+      } else if (this._length > 1) {
+        if (del === this._head) {
+          this._head = del.next
+        }
+        del.next.prev = del.prev
+        del.prev.next = del.next
+      }
+      this._length--
+    }
+  }
+
+  private unlink(node: Node<T>) {
     this.link(node.prev, node.next);
   }
 
-  private contains(val: T) : boolean {
+  private contains(val: T): boolean {
     let node = this._head;
-    for (let i = 0; i < this._length; i ++) {
+    for (let i = 0; i < this._length; i++) {
       if (node) {
         if (node.value === val) {
           return true;
