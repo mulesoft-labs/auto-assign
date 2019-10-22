@@ -1,5 +1,5 @@
 {
-  "name": "auto-assign",
+  "name": "round-assign",
   "version": "1.0.0",
   "description": "A Probot app that adds reviewers to pull requests when pull requests are opened.",
   "author": "Guido Tamborindeguy <guido@tamborindeguy.com.ar>",
