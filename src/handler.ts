@@ -10,7 +10,15 @@ interface AppConfig {
 
 export class Handler {
 
+  public async handleIssue(context: Context, firestore: FirebaseFirestore.Firestore): Promise<void> {
+    this.doAssign(context, firestore, false)
+  }
+
   public async handlePullRequest(context: Context, firestore: FirebaseFirestore.Firestore): Promise<void> {
+    this.doAssign(context, firestore, true)
+  }
+
+  public async doAssign(context: Context, firestore: FirebaseFirestore.Firestore, isPR: Boolean): Promise<void> {
     const config: AppConfig | null = await context.config<AppConfig | null>('auto_assign.yml')
 
     if (!config) {
@@ -18,7 +26,7 @@ export class Handler {
     }
 
     const payload = context.payload
-    const labels = payload.pull_request.labels
+    const labels = isPR ? payload.pull_request.labels : payload.issue.labels
     if (config.skipKeywords && includesSkipKeywords(labels, config.skipKeywords)) {
       context.log('skips adding reviewers')
       return
@@ -33,17 +41,16 @@ export class Handler {
     });
     console.log(dbTeam)
     var team: Team<string> = this.checkTeamConfig(config.teamMembers, dbTeam);
-    let listAssignees = payload.pull_request.assignees
-    let oneAssigne = payload.pull_request.assignee
+    let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
+    let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
     if (listAssignees.length > 0) {
-      // move assignees to the bottom of the queue and dont asiggn new
-      
+      // move assignees to the bottom of the queue and dont assign new
       listAssignees.forEach((assignee: { login: string; }) => {
         console.log(assignee.login)
         team.toBack(assignee.login);
       });
-    } else if (oneAssigne && oneAssigne.length > 0) {
-      team.toBack(oneAssigne.login)
+    } else if (oneAssignee && oneAssignee.length > 0) {
+      team.toBack(oneAssignee.login)
     } else {
       // check and assign new
       const assigner = new Assigner(context)
@@ -63,7 +70,7 @@ export class Handler {
     if (!configTeam || !dbTeam) {
       return team;
     }
-    const dbSet = new Set(dbTeam);
+    const dbSet = new Set(dbTeam)
     const configSet = new Set(configTeam)
     configTeam.forEach(member => {
       if (!dbSet.has(member)) {
