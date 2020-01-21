@@ -3,9 +3,12 @@ import { Handler } from './handler'
 import admin from 'firebase-admin'
 
 // Fetch the service account key JSON file contents
-const serviceAccount = require("../src/.private/auto-assign-firebase.json");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_APP_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  }),
   databaseURL: "https://auto-assign.firebaseio.com"
 })
 
