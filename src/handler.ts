@@ -54,7 +54,7 @@ export class Handler {
     } else {
       // check and assign new
       const assigner = new Assigner(context)
-      assigner.assignPR(team)
+      assigner.assign(team, isPR)
       team.proceed()
     }
 
