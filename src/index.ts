@@ -17,4 +17,8 @@ export = (app: Application) => {
     app.log('pull request opened')
     handler.handlePullRequest(context, admin.firestore())
   })
+  app.on('issue.opened', async context => { 
+    app.log('issue opened')
+    handler.handleIssue(context, admin.firestore())
+  })
 }
