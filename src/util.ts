@@ -1,5 +1,5 @@
-export function includesSkipKeywords (labels: string[], skipKeywords: string[]): boolean {
-  let lowerCaseLabels = labels.map(x => x.toString().toLowerCase())
+export function includesSkipKeywords (labels: any, skipKeywords: string[]): boolean {
+  let lowerCaseLabels = labels.map((x: { name: string; }) => x.name.toLowerCase())
   let labelsSet = new Set(lowerCaseLabels)
   for (const skipKeyword of skipKeywords) {
     if (labelsSet.has(skipKeyword.toLowerCase())) {
