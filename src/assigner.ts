@@ -29,13 +29,13 @@ export class Assigner {
         try {
             const payload = this.context.payload
             const owner = isPR ? payload.pull_request.user.login : payload.issue.user.login
-            this.doAssign(team, owner)
+            this.doAssign(team, owner, isPR)
         } catch (error) {
             this.context.log(error)
         }
     }
 
-    public async doAssign(team: Team<string>, owner: string) {
+    public async doAssign(team: Team<string>, owner: string, isPR: Boolean) {
 
         let reviewer = team.next(owner)
         if (!reviewer) {
@@ -50,7 +50,7 @@ export class Assigner {
             member: reviewer
         }).then((res) => {
             this.context.github.query(addAssignee, {
-                id: this.context.payload.pull_request.node_id,
+                id: isPR ? this.context.payload.pull_request.node_id : this.context.payload.issue.node_id,
                 assigneeIds: [res.user.id]
             }).catch((err) => {
                 console.log(err.message); // something bad happened
