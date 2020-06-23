@@ -6,10 +6,11 @@ import { createPool } from 'generic-pool'
 const pool = createPool({
   create: async () => {
     const client = new Client({
-      host: "localhost",
+      host: process.env.DB_HOST,
       port: 5432,
-      user: "srial",
-      database: "probotdb"
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
     })
     return client.connect().then(() => {
       client.on('error', console.log);
