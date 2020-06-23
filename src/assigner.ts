@@ -1,6 +1,6 @@
-
 import { Context } from 'probot'
-import { Team } from './team'
+import { Queue } from './queue'
+import { getOwner } from './util'
 
 const userQuery = `
 query userQuery($member: String!) {
@@ -25,17 +25,16 @@ export class Assigner {
         this.context = context
     }
 
-    public async assign(team: Team<string>, isPR: Boolean) {
+    public async assign(team: Queue<string>, isPR: Boolean) {
         try {
-            const payload = this.context.payload
-            const owner = isPR ? payload.pull_request.user.login : payload.issue.user.login
+            const owner = getOwner(this.context,isPR)
             this.doAssign(team, owner, isPR)
         } catch (error) {
             this.context.log(error)
         }
     }
 
-    public async doAssign(team: Team<string>, owner: string, isPR: Boolean) {
+    public async doAssign(team: Queue<string>, owner: string, isPR: Boolean) {
 
         let reviewer = team.next(owner)
         if (!reviewer) {
@@ -51,7 +50,7 @@ export class Assigner {
         }).then((res) => {
             this.context.github.query(addAssignee, {
                 id: isPR ? this.context.payload.pull_request.node_id : this.context.payload.issue.node_id,
-                assigneeIds: [res.user.id]
+                assigneeIds: [(res as any).user.id]
             }).catch((err) => {
                 console.log(err.message); // something bad happened
             });

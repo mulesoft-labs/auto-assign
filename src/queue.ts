@@ -1,4 +1,4 @@
-export class Team<T> {
+export class Queue<T> {
 
   private _head?: Node<T>;
   private _length: number;
