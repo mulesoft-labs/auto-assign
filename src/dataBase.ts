@@ -20,7 +20,7 @@ export class DataBasePostgreSQL implements AppStorage{
                 ,[repo, configTeamName])
             // return object back to pool
             pool.release(client);
-            if (resultIterator.rows){
+            if (resultIterator.rows.length > 0){
                 return new QueueDB(repo,configTeamName,(resultIterator.rows[0][0] as string).split(","))
             } else {
                 return null
