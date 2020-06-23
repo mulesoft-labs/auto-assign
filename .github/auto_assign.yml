@@ -1,9 +1,34 @@
-# A list of members able to review PRs (github users)
-teamMembers:
-  - guidota
-  - martincousido
-  - guidota2
+# Scope PROD/DEV is used to set AppStorage
+scope: dev
+teams:
+  - name: XRV
+    # A list of team members (github users)
+    members:
+      - camilaserra5
+      - juanperezperri
+      - nicodimov
+      - mdaloia
+      - srialMule
+    # A list of team reviewers (github users)
+    reviewers:
+      - camilaserra5
+      - juanperezperri
+      - nicodimov
+      - mdaloia
+      - pablocabrera85
 
+  - name: TBD
+    members:
+      - martincousido
+      - marinarv
+      - antonelladellanzo
+      - ermastrangelo
+      - greobasco
+    reviewers:
+      - martincousido
+      - marinarv
+      - greobasco
 # A list of keywords to be skipped the process that add reviewers if pull requests include it
 skipKeywords:
   - wip
+
