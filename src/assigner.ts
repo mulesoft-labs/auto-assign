@@ -48,10 +48,15 @@ export class Assigner {
         this.context.github.graphql (userQuery, {
             member: reviewer
         }).then((res) => {
+            console.log(res);
             this.context.github.graphql (addAssignee, {
                 id: isPR ? this.context.payload.pull_request.node_id : this.context.payload.issue.node_id,
                 assigneeIds: [(res as any).user.id]
-            }).catch((err) => {
+            }).then((res) =>
+            {
+                console.log(res);
+            }).
+            catch((err) => {
                 console.log(err.message); // something bad happened
             });
         }).catch((err) => {

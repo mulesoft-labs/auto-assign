@@ -61,7 +61,7 @@ export class Handler {
       teamReviewersQueue.proceed()
     }
     // manage persistence for each repo separately
-    db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamReviewersQueue.toArray()))
+    await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamReviewersQueue.toArray()))
   }
 
   private getUUID(repo: string) {
