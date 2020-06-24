@@ -45,10 +45,10 @@ export class Assigner {
 
 
         // get user
-        this.context.github.query(userQuery, {
+        this.context.github.graphql (userQuery, {
             member: reviewer
         }).then((res) => {
-            this.context.github.query(addAssignee, {
+            this.context.github.graphql (addAssignee, {
                 id: isPR ? this.context.payload.pull_request.node_id : this.context.payload.issue.node_id,
                 assigneeIds: [(res as any).user.id]
             }).catch((err) => {
