@@ -10,7 +10,7 @@ teams:
       - mdaloia
       - srialMule
     # A list of team reviewers (github users)
-    reviewers:
+    assignees:
       - camilaserra5
       - juanperezperri
       - nicodimov
@@ -24,7 +24,7 @@ teams:
       - antonelladellanzo
       - ermastrangelo
       - greobasco
-    reviewers:
+    assignees:
       - martincousido
       - marinarv
       - greobasco

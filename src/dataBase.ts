@@ -48,12 +48,12 @@ export class DataBasePostgreSQL implements AppStorage{
 }
 
 export class DataBaseMock implements AppStorage{
-    private _dbQueues: QueueDB[]
+    private _repositoriesState: QueueDB[]
 
     getTeamQueue(repo: string, configTeamName: string): Promise<QueueDB | null> {
         let target: QueueDB
-        if (this._dbQueues != null){
-            for(let queue of this._dbQueues){
+        if (this._repositoriesState != null){
+            for(let queue of this._repositoriesState){
                 if (queue.repo === repo && configTeamName === queue.teamName){
                     target = queue
                     break
@@ -65,19 +65,19 @@ export class DataBaseMock implements AppStorage{
 
     setTeamQueue(queueDB: QueueDB) {
         let found: boolean = false
-        if (this._dbQueues != null){
-            for (var i = 0, len = this._dbQueues.length; i < len; i++) {
-                if (this._dbQueues[i].repo === queueDB.repo && this._dbQueues[i].teamName === queueDB.teamName){
-                    this._dbQueues[i] = queueDB
+        if (this._repositoriesState != null){
+            for (var i = 0, len = this._repositoriesState.length; i < len; i++) {
+                if (this._repositoriesState[i].repo === queueDB.repo && this._repositoriesState[i].teamName === queueDB.teamName){
+                    this._repositoriesState[i] = queueDB
                     found = true
                     break
                 }
             }
             if (!found){
-                this._dbQueues.push(queueDB)
+                this._repositoriesState.push(queueDB)
             }
         } else{
-            this._dbQueues = [queueDB]
+            this._repositoriesState = [queueDB]
         }
         return queueDB
     }

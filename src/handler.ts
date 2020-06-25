@@ -43,25 +43,25 @@ export class Handler {
     let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
 
     console.log(dbTeamQueue? dbTeamQueue : "dbQueue not exist yet for the team: " + ownerConfigTeam? ownerConfigTeam.name: "unknown team")
-    var teamReviewersQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.reviewers, dbTeamQueue? dbTeamQueue.data : null);
+    var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
     let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
     let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
     if (listAssignees.length > 0) {
       // move assignees to the bottom of the queue and dont assign new
       listAssignees.forEach((assignee: { login: string; }) => {
         console.log(assignee.login)
-        teamReviewersQueue.toBack(assignee.login);
+        teamAssigneesQueue.toBack(assignee.login);
       });
     } else if (oneAssignee && oneAssignee.length > 0) {
-      teamReviewersQueue.toBack(oneAssignee.login)
+      teamAssigneesQueue.toBack(oneAssignee.login)
     } else {
       // check and assign new
       const assigner = new Assigner(context)
-      assigner.assign(teamReviewersQueue, isPR)
-      teamReviewersQueue.proceed()
+      assigner.assign(teamAssigneesQueue, isPR)
+      teamAssigneesQueue.proceed()
     }
     // manage persistence for each repo separately
-    await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamReviewersQueue.toArray()))
+    await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamAssigneesQueue.toArray()))
   }
 
   private getUUID(repo: string) {
@@ -69,16 +69,16 @@ export class Handler {
   }
 
   // synchronize configTeam with dbTeamQueue witch has the current order
-  private syncTeamConfig(configTeamReviewers: string[], dbTeamQueue: string[]): Queue<string> {
-    // in the first run we only have configTeamReviewers
-    let queue = new Queue<string>(dbTeamQueue ? dbTeamQueue : configTeamReviewers)
-    if (!configTeamReviewers || !dbTeamQueue) {
+  private syncTeamConfig(configTeamAssignees: string[], dbTeamQueue: string[]): Queue<string> {
+    // in the first run we only have configTeamAssignees
+    let queue = new Queue<string>(dbTeamQueue ? dbTeamQueue : configTeamAssignees)
+    if (!configTeamAssignees || !dbTeamQueue) {
       return queue;
     }
     // when we have both, we will use dbTeamQueue order and the list of reviewers from config
     const dbSet = new Set(dbTeamQueue)
-    const configSet = new Set(configTeamReviewers)
-    configTeamReviewers.forEach(member => {
+    const configSet = new Set(configTeamAssignees)
+    configTeamAssignees.forEach(member => {
       if (!dbSet.has(member)) {
         console.log("Team member ${member} added! ")
         queue.append(member)
@@ -109,5 +109,5 @@ export class Handler {
 export class Team {
   name: string
   members: string[]
-  reviewers: string[]
+  assignees: string[]
 }

@@ -12,14 +12,13 @@ To install auto-assign you need to add an auto_assign.yml file into your repo, i
 ## Structure of auto_assign.yml
 
 ```bash
-scope: prod
 teams:
   - name: team_name_1
     members:
       - github_user_name_1
       - github_user_name_2
     
-    reviewers:
+    assignees:
       - github_user_name_1
       - github_user_name_2
 
@@ -28,6 +27,6 @@ teams:
       - github_user_name_3
       - github_user_name_4
     
-    reviewers:
+    assignees:
       - github_user_name_5
 ```

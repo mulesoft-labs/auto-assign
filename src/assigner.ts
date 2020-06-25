@@ -43,18 +43,13 @@ export class Assigner {
         }
         console.log("candidate to be assigned: " + reviewer)
 
-
         // get user
         this.context.github.graphql (userQuery, {
             member: reviewer
         }).then((res) => {
-            console.log(res);
             this.context.github.graphql (addAssignee, {
                 id: isPR ? this.context.payload.pull_request.node_id : this.context.payload.issue.node_id,
                 assigneeIds: [(res as any).user.id]
-            }).then((res) =>
-            {
-                console.log(res);
             }).
             catch((err) => {
                 console.log(err.message); // something bad happened
