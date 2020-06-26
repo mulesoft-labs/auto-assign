@@ -17,10 +17,12 @@ export class Handler {
   private _dbMock: AppStorage
 
   public async handleIssue(context: Context,pool: Pool<Client>): Promise<void> {
+    console.log("issue url: " + context.payload.issue.url);
     this.doAssign(context, false, pool)
   }
 
   public async handlePullRequest(context: Context, pool: Pool<Client>): Promise<void> {
+    console.log("pull request url: " + context.payload.pull_request.url);
     this.doAssign(context, true, pool)
   }
 
@@ -49,10 +51,11 @@ export class Handler {
     if (listAssignees.length > 0) {
       // move assignees to the bottom of the queue and dont assign new
       listAssignees.forEach((assignee: { login: string; }) => {
-        console.log(assignee.login)
+        console.log("move to back: " + assignee.login)
         teamAssigneesQueue.toBack(assignee.login);
       });
     } else if (oneAssignee && oneAssignee.length > 0) {
+      console.log("move to back: " + oneAssignee.login)
       teamAssigneesQueue.toBack(oneAssignee.login)
     } else {
       // check and assign new
