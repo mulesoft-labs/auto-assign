@@ -42,30 +42,33 @@ export class Handler {
     let repo: string = this.getUUID(context.payload.repository.html_url)
     let owner = getOwner(context, isPR)
     let ownerConfigTeam = getTeam(owner, config.teams)
-    let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
-
-    console.log(dbTeamQueue? dbTeamQueue : "Not exist register in database yet for " + owner +
-        "'s team: " + (ownerConfigTeam? ownerConfigTeam.name: "unknown team"))
-    var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
-    let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
-    let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
-    if (listAssignees.length > 0) {
-      // move assignees to the bottom of the queue and dont assign new
-      listAssignees.forEach((assignee: { login: string; }) => {
-        console.log("Move to back to the queue due a manual assignation: " + assignee.login)
-        teamAssigneesQueue.toBack(assignee.login);
-      });
-    } else if (oneAssignee && oneAssignee.length > 0) {
-      console.log("Move to back to the queue due a manual assignation: " + oneAssignee.login)
-      teamAssigneesQueue.toBack(oneAssignee.login)
-    } else {
-      // check and assign new
-      const assigner = new Assigner(context)
-      assigner.assign(teamAssigneesQueue, isPR)
-      teamAssigneesQueue.proceed()
+    if (ownerConfigTeam){
+      let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
+      console.log(dbTeamQueue? dbTeamQueue : "New database register for " + owner +
+          "'s team: " + ownerConfigTeam.name)
+      var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
+      let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
+      let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
+      if (listAssignees.length > 0) {
+        // move assignees to the bottom of the queue and dont assign new
+        listAssignees.forEach((assignee: { login: string; }) => {
+          console.log("Move to back to the queue due a manual assignation: " + assignee.login)
+          teamAssigneesQueue.toBack(assignee.login);
+        });
+      } else if (oneAssignee && oneAssignee.length > 0) {
+        console.log("Move to back to the queue due a manual assignation: " + oneAssignee.login)
+        teamAssigneesQueue.toBack(oneAssignee.login)
+      } else {
+        // check and assign new
+        const assigner = new Assigner(context)
+        assigner.assign(teamAssigneesQueue, isPR)
+        teamAssigneesQueue.proceed()
+      }
+      // manage persistence for each repo separately
+      await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamAssigneesQueue.toArray()))
+    } else{
+      console.log("There are no configuration to process this " + (isPR? "PR":"issue") + " created by: " + owner)
     }
-    // manage persistence for each repo separately
-    await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamAssigneesQueue.toArray()))
   }
 
   private getUUID(repo: string) {
