@@ -44,18 +44,19 @@ export class Handler {
     let ownerConfigTeam = getTeam(owner, config.teams)
     let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
 
-    console.log(dbTeamQueue? dbTeamQueue : "dbQueue not exist yet for the team: " + ownerConfigTeam? ownerConfigTeam.name: "unknown team")
+    console.log(dbTeamQueue? dbTeamQueue : "Not exist register in database yet for " + owner +
+        "'s team: " + (ownerConfigTeam? ownerConfigTeam.name: "unknown team"))
     var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
     let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
     let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
     if (listAssignees.length > 0) {
       // move assignees to the bottom of the queue and dont assign new
       listAssignees.forEach((assignee: { login: string; }) => {
-        console.log("move to back: " + assignee.login)
+        console.log("Move to back to the queue due a manual assignation: " + assignee.login)
         teamAssigneesQueue.toBack(assignee.login);
       });
     } else if (oneAssignee && oneAssignee.length > 0) {
-      console.log("move to back: " + oneAssignee.login)
+      console.log("Move to back to the queue due a manual assignation: " + oneAssignee.login)
       teamAssigneesQueue.toBack(oneAssignee.login)
     } else {
       // check and assign new
@@ -83,14 +84,14 @@ export class Handler {
     const configSet = new Set(configTeamAssignees)
     configTeamAssignees.forEach(member => {
       if (!dbSet.has(member)) {
-        console.log("Team member ${member} added! ")
+        console.log("Team member " + member + " added! ")
         queue.append(member)
       }
     })
 
     dbSet.forEach(member => {
       if (!configSet.has(member)) {
-        console.log("Team member ${member} removed! ")
+        console.log("Team member " + member + " removed! ")
         queue.remove(member)
       }
     })

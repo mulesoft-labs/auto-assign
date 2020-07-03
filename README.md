@@ -5,7 +5,6 @@ through teams member list, once the team is determined the reviewers list is use
 assign a reviewer, team's names are used as key because of that each one must be different, each team has its own reviewers queue.
 
 ## Installation
-
 To install auto-assign you need to follow the next steps.
 
 1. Go to GitHub Settings/Developer settings and create a new GitHub App.
@@ -21,6 +20,9 @@ To install auto-assign you need to follow the next steps.
 1. Install your GitHub App to your repository.
 
 ## Structure of auto_assign.yml
+You can set a default list of assignees that will be applied when someone that is not a member of any team 
+creates a PR/Issue, you just need to create a team called default that team just need a list of assignees
+just as in the following example.
 
 ```bash
 teams:
@@ -28,7 +30,6 @@ teams:
     members:
       - github_user_name_1
       - github_user_name_2
-    
     assignees:
       - github_user_name_1
       - github_user_name_2
@@ -37,7 +38,16 @@ teams:
     members:
       - github_user_name_3
       - github_user_name_4
-    
     assignees:
       - github_user_name_5
+
+  - name: default
+    assignees:
+      - github_user_name_1
+      - github_user_name_3
 ```
+
+## Testing
+If you want to test something without affect the queue order for your repo you can add a property scope: dev
+to your auto_assign.yml that will forced the app to use a memory queue instead of the database, take in mind 
+that every PR and Issue that you create using this property will be really assign.

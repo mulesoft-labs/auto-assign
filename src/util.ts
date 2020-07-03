@@ -20,12 +20,15 @@ export function getOwner(context: Context,isPR: Boolean): string{
 
 export function getTeam(member: string, teams: Team[]): Team | null{
   let teamTarget: Team
+  let defaultTeam: Team
   for (var i = 0, len = teams.length; i < len; i++) {
-    let team: Team = teams[i]
-    if (team.members.includes(member)){
-      teamTarget = teams[i]
-      break
+    var team = teams[i];
+    if (team.name === 'default') {
+      defaultTeam = team;
+    } else if (team.members.includes(member)) {
+      teamTarget = teams[i];
+      break;
     }
   }
-  return teamTarget? teamTarget : null
+  return teamTarget? teamTarget : defaultTeam
 }
