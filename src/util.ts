@@ -26,7 +26,7 @@ export function getTeam(member: string, teams: Team[]): Team | null{
       teamTarget = team;
     }
 
-    if (team.members.includes(member)) {
+    if (team.members && team.members.includes(member)) {
       teamTarget = team;
       break;
     }
