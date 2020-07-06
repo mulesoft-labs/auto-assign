@@ -21,7 +21,7 @@ To install auto-assign you need to follow the next steps.
 
 ## Structure of auto_assign.yml
 You can set a default list of assignees that will be applied when someone that is not a member of any team 
-creates a PR/Issue, you just need to create a team called default that team just need a list of assignees
+creates a PR/Issue, In order to do that, you just need to create a team called `default`. That team just need a list of `assignees`
 just as in the following example.
 
 ```bash
@@ -48,6 +48,6 @@ teams:
 ```
 
 ## Testing
-If you want to test something without affect the queue order for your repo you can add a property scope: dev
-to your auto_assign.yml that will forced the app to use a memory queue instead of the database, take in mind 
-that every PR and Issue that you create using this property will be really assign.
+If you want to test something without affecting the queue order for your repo you can add a property `scope: dev`
+to your `auto_assign.yml`. This will force the app to use a memory queue instead of the database.
+WARNING: Keep in mind that every PR and Issue that you create using this property will be really assign.

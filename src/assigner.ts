@@ -41,7 +41,7 @@ export class Assigner {
             this.context.log('there is no candidate to review')
             return
         }
-        console.log((isPR? "The PR" : "The issue") + " created by " + owner + " will be assign to: " + reviewer)
+        console.log(`The ${isPR ? "PR" : "issue"} created by ${owner} will be assign to: ${reviewer}`)
         // get user
         this.context.github.graphql (userQuery, {
             member: reviewer

@@ -17,12 +17,12 @@ export class Handler {
   private _dbMock: AppStorage
 
   public async handleIssue(context: Context,pool: Pool<Client>): Promise<void> {
-    console.log("issue url: " + context.payload.issue.url);
+    console.log(`Issue url: ${context.payload.issue.url}`);
     this.doAssign(context, false, pool)
   }
 
   public async handlePullRequest(context: Context, pool: Pool<Client>): Promise<void> {
-    console.log("pull request url: " + context.payload.pull_request.url);
+    console.log(`Pull request url: ${context.payload.pull_request.url}`);
     this.doAssign(context, true, pool)
   }
 
@@ -42,33 +42,32 @@ export class Handler {
     let repo: string = this.getUUID(context.payload.repository.html_url)
     let owner = getOwner(context, isPR)
     let ownerConfigTeam = getTeam(owner, config.teams)
-    if (ownerConfigTeam){
-      let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
-      console.log(dbTeamQueue? dbTeamQueue : "New database register for " + owner +
-          "'s team: " + ownerConfigTeam.name)
-      var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
-      let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
-      let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
-      if (listAssignees.length > 0) {
-        // move assignees to the bottom of the queue and dont assign new
-        listAssignees.forEach((assignee: { login: string; }) => {
-          console.log("Move to back to the queue due a manual assignation: " + assignee.login)
-          teamAssigneesQueue.toBack(assignee.login);
-        });
-      } else if (oneAssignee && oneAssignee.length > 0) {
-        console.log("Move to back to the queue due a manual assignation: " + oneAssignee.login)
-        teamAssigneesQueue.toBack(oneAssignee.login)
-      } else {
-        // check and assign new
-        const assigner = new Assigner(context)
-        assigner.assign(teamAssigneesQueue, isPR)
-        teamAssigneesQueue.proceed()
-      }
-      // manage persistence for each repo separately
-      await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamAssigneesQueue.toArray()))
-    } else{
-      console.log("There are no configuration to process this " + (isPR? "PR":"issue") + " created by: " + owner)
+    if (!ownerConfigTeam) {
+      console.log(`There are no configuration to process this ${isPR ? "PR" : "issue"} created by: ${owner}`)
+      return
     }
+    let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
+    console.log(dbTeamQueue? dbTeamQueue : `New database register for ${owner}'s team: ${ownerConfigTeam.name}`)
+    var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
+    let listAssignees = isPR ? payload.pull_request.assignees : payload.issue.assignees
+    let oneAssignee = isPR ? payload.pull_request.assignee : payload.issue.assignee
+    if (listAssignees.length > 0) {
+      // move assignees to the bottom of the queue and dont assign new
+      listAssignees.forEach((assignee: { login: string; }) => {
+        console.log(`Move to back to the queue due to a manual assignation: ${assignee.login}`)
+        teamAssigneesQueue.toBack(assignee.login);
+      });
+    } else if (oneAssignee && oneAssignee.length > 0) {
+      console.log(`Move to back to the queue due to a manual assignation: ${oneAssignee.login}`)
+      teamAssigneesQueue.toBack(oneAssignee.login)
+    } else {
+      // check and assign new
+      const assigner = new Assigner(context)
+      assigner.assign(teamAssigneesQueue, isPR)
+      teamAssigneesQueue.proceed()
+    }
+    // manage persistence for each repo separately
+    await db.setTeamQueue(new QueueDB(repo,ownerConfigTeam.name,teamAssigneesQueue.toArray()))
   }
 
   private getUUID(repo: string) {
@@ -87,14 +86,14 @@ export class Handler {
     const configSet = new Set(configTeamAssignees)
     configTeamAssignees.forEach(member => {
       if (!dbSet.has(member)) {
-        console.log("Team member " + member + " added! ")
+        console.log(`Team member ${member} added!`)
         queue.append(member)
       }
     })
 
     dbSet.forEach(member => {
       if (!configSet.has(member)) {
-        console.log("Team member " + member + " removed! ")
+        console.log(`Team member ${member} removed!`)
         queue.remove(member)
       }
     })
