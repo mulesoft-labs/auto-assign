@@ -40,8 +40,12 @@ export class Handler {
       context.log('skips adding reviewers')
       return
     }
+    context.log('Encoding URIComponent')
     let repo: string = this.getUUID(context.payload.repository.html_url)
+    context.log(`repo: ${repo}`)
     let owner = getOwner(context, isPR)
+    context.log(`owner: ${owner}`)
+
     let ownerConfigTeam = getTeam(owner, config.teams)
     if (!ownerConfigTeam) {
       console.log(`There are no configuration to process this ${isPR ? "PR" : "issue"} created by: ${owner}`)
