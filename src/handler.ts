@@ -51,6 +51,7 @@ export class Handler {
       console.log(`There are no configuration to process this ${isPR ? "PR" : "issue"} created by: ${owner}`)
       return
     }
+    context.log(`ownerTeam: ${ownerConfigTeam.name}`)
     let dbTeamQueue: QueueDB | null = await db.getTeamQueue(repo, ownerConfigTeam.name)
     console.log(dbTeamQueue? dbTeamQueue : `New database register for ${owner}'s team: ${ownerConfigTeam.name}`)
     var teamAssigneesQueue: Queue<string> = this.syncTeamConfig(ownerConfigTeam.assignees, dbTeamQueue? dbTeamQueue.data : null);
