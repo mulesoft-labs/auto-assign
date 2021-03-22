@@ -27,12 +27,13 @@ export class Handler {
   }
 
   public async doAssign(context: Context, isPR: Boolean, pool: Pool<Client>): Promise<void> {
+    context.log('Getting auto_assign.yml ...')
     const config: AppConfig | null = await context.config<AppConfig | null>('auto_assign.yml')
     var db: AppStorage = this.getAppStorage(config.scope, pool)
     if (!config) {
       throw new Error('the configuration file failed to load')
     }
-
+    context.log('Obtained auto_assign.yml')
     const payload = context.payload
     const labels = isPR ? payload.pull_request.labels : payload.issue.labels
     if (config.skipKeywords && includesSkipKeywords(labels, config.skipKeywords)) {
