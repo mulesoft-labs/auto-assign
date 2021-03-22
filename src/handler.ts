@@ -40,11 +40,11 @@ export class Handler {
       context.log('skips adding reviewers')
       return
     }
-    context.log('GetUUID')
+    context.log('Encoding URIComponent')
     let repo: string = this.getUUID(context.payload.repository.html_url)
-    context.log(`UUID: ${repo}`)
+    context.log(`repo: ${repo}`)
     let owner = getOwner(context, isPR)
-    context.log(`Owner: ${owner}`)
+    context.log(`owner: ${owner}`)
 
     let ownerConfigTeam = getTeam(owner, config.teams)
     if (!ownerConfigTeam) {
