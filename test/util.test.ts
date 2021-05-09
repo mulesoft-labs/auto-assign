@@ -1,25 +1,29 @@
-import { includesSkipKeywords } from '../src/util'
+import { includesSkipKeywords } from "../src/util";
 
-describe('includesSkipKeywords', () => {
-  test('returns true if the pull request labels includes skip word', () => {
-    const labels = [{
-      name: "WIP"
-    }]
-    const skipWords = ['wip']
+describe("includesSkipKeywords", () => {
+    test("returns true if the pull request labels includes skip word", () => {
+        const labels = [
+            {
+                name: "WIP",
+            },
+        ];
+        const skipWords = ["wip"];
 
-    const contains = includesSkipKeywords(labels, skipWords)
+        const contains = includesSkipKeywords(labels, skipWords);
 
-    expect(contains).toEqual(true)
-  })
+        expect(contains).toEqual(true);
+    });
 
-  test('returns false if the pull request labels does not include skip word', () => {
-    const labels = [{
-      name: ""
-    }]
-    const skipWords = ['wip']
+    test("returns false if the pull request labels does not include skip word", () => {
+        const labels = [
+            {
+                name: "",
+            },
+        ];
+        const skipWords = ["wip"];
 
-    const contains = includesSkipKeywords(labels, skipWords)
+        const contains = includesSkipKeywords(labels, skipWords);
 
-    expect(contains).toEqual(false)
-  })
-})
+        expect(contains).toEqual(false);
+    });
+});

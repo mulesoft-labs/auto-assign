@@ -1,8 +1,9 @@
-node_modules/
-coverage/
-lib/
-.env
-.env.example
-.vscode/
-package-lock.json
+node_modules
+npm-debug.log
 *.pem
+!mock-cert.pem
+.env
+coverage
+lib
+.idea
+
