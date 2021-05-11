@@ -13,15 +13,24 @@ export class PoolFactory {
                     database: process.env.DB_NAME,
                 });
 
-                return client.connect().then(() => {
-                    // tslint:disable:no-console
-                    client.on("error", console.log);
-                    return client;
-                });
+                return client.connect().then(
+                    () => {
+                        client.on("error", (dbError) => {
+                            throw new Error(`An error was received while connecting to the DB. :: Reason: ${dbError}`);
+                        });
+                        return client;
+                    },
+                    (e) => {
+                        throw new Error(`Could not create a Connection. :: Reason: ${e}`);
+                    }
+                );
             },
 
             destroy: async (client: Client) => {
-                return client.end().then();
+                return client.end().then(() => {
+                    // tslint:disable:no-console
+                    console.log(`Connection destroyed`);
+                });
             },
 
             validate: (client: Client) => {
