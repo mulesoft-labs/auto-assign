@@ -42,7 +42,7 @@ export class Assigner {
         }
         this.context.log(`The ${isPR ? "PR" : "issue"} created by ${owner} will be assign to: ${reviewer}`);
         // get user
-        this.context.octokit
+        await this.context.octokit
             .graphql(userQuery, {
                 member: reviewer,
             })
