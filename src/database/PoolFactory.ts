@@ -1,49 +1,15 @@
-import { createPool, Factory } from "generic-pool";
-import { Client } from "ts-postgres";
+import { Pool } from "pg";
 
 export class PoolFactory {
-    public createNewPool() {
-        const factory: Factory<Client> = {
-            create: async () => {
-                const client = new Client({
-                    host: process.env.DB_HOST,
-                    port: 5432,
-                    user: process.env.DB_USER,
-                    password: process.env.DB_PASSWORD,
-                    database: process.env.DB_NAME,
-                });
+    public createNewPool(): Pool {
+        return new Pool({
+            // pg.Client options
+            connectionString: process.env.DATABASE_URL, // e.g. postgres://user:password@host:5432/database
 
-                return client.connect().then(
-                    () => {
-                        client.on("error", (dbError) => {
-                            throw new Error(`An error was received while connecting to the DB. :: Reason: ${dbError}`);
-                        });
-                        return client;
-                    },
-                    (e) => {
-                        throw new Error(`Could not create a Connection. :: Reason: ${e}`);
-                    }
-                );
-            },
-
-            destroy: async (client: Client) => {
-                return client.end().then(() => {
-                    // tslint:disable:no-console
-                    console.log(`Connection destroyed`);
-                });
-            },
-
-            validate: (client: Client) => {
-                return Promise.resolve(!client.closed);
-            },
-        };
-
-        const opts = {
-            max: 10, // maximum size of the pool
-            min: 2, // minimum size of the pool
-            testOnBorrow: true, // should the pool validate resources before giving them to clients
-        };
-
-        return createPool(factory, opts);
+            // pg.Pool options
+            connectionTimeoutMillis: 5000,
+            idleTimeoutMillis: 30000,
+            max: 10,
+        });
     }
 }

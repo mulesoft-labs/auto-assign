@@ -1,33 +1,38 @@
-import { Pool } from "generic-pool";
-import { Client } from "ts-postgres";
+import { Pool } from "pg";
 
 import { IAppStorage } from "./IAppStorage";
 import { QueueDB } from "./QueueDB";
 
 export class DataBasePostgreSQL implements IAppStorage {
-    private readonly pool: Pool<Client>;
+    private readonly pool: Pool;
 
-    constructor(pool: Pool<Client>) {
+    constructor(pool: Pool) {
         this.pool = pool;
     }
 
     public async getTeamQueue(repo: string, configTeamName: string): Promise<QueueDB | null> {
-        try {
-            return this.pool.use(async (client) => {
+        return (async () => {
+            const client = await this.pool.connect();
+            try {
                 const resultIterator = await client.query("SELECT data FROM queue WHERE repo = $1 AND team = $2", [
                     repo,
                     configTeamName,
                 ]);
 
                 if (resultIterator.rows.length > 0) {
-                    return new QueueDB(repo, configTeamName, (resultIterator.rows[0][0] as string).split(","));
+                    return new QueueDB(repo, configTeamName, (resultIterator.rows[0].data as string).split(","));
                 } else {
                     return null;
                 }
-            });
-        } catch (e) {
-            throw new Error(`Couldn't get Team queue for ${configTeamName} in repo ${repo} :: Reason: ${e}`);
-        }
+            } finally {
+                // Make sure to release the client before any error handling,
+                // just in case the error handling itself throws an error.
+                client.release();
+            }
+        })().catch((err) => {
+            // console.log(err.stack)
+            throw new Error(`Couldn't get Team queue for ${configTeamName} in repo ${repo} :: Reason: ${err}`);
+        });
     }
 
     public async setTeamQueue(queueDB: QueueDB) {
@@ -41,14 +46,21 @@ export class DataBasePostgreSQL implements IAppStorage {
 
         const queryParams = [queueDB.repo, queueDB.teamName, queueDB.data.toString()];
 
-        try {
-            // tslint:disable:await-promise
-            await this.pool.use((client) => {
-                client.query(query, queryParams);
-                client.query("COMMIT");
-            });
-        } catch (e) {
-            throw new Error(`Couldn't set Team queue for ${queueDB.teamName} in repo ${queueDB.repo} :: Reason: ${e}`);
-        }
+        (async () => {
+            const client = await this.pool.connect();
+            try {
+                await client.query(query, queryParams);
+                await client.query("COMMIT");
+            } finally {
+                // Make sure to release the client before any error handling,
+                // just in case the error handling itself throws an error.
+                client.release();
+            }
+        })().catch((err) => {
+            // console.log(err.stack)
+            throw new Error(
+                `Couldn't set Team queue for ${queueDB.teamName} in repo ${queueDB.repo} :: Reason: ${err}`
+            );
+        });
     }
 }

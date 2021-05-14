@@ -1,6 +1,5 @@
-import { Pool } from "generic-pool";
+import { Pool } from "pg";
 import { Context } from "probot";
-import { Client } from "ts-postgres";
 
 import { Assigner } from "./assign/assigner";
 import { Team } from "./assign/Team";
@@ -20,17 +19,17 @@ interface IAppConfig {
 export class Handler {
     private _dbMock?: IAppStorage;
 
-    public async handleIssue(context: Context, pool: Pool<Client>): Promise<void> {
+    public async handleIssue(context: Context, pool: Pool): Promise<void> {
         context.log(`Issue url: ${context.payload.issue.url}`);
         await this.doAssign(context, false, pool);
     }
 
-    public async handlePullRequest(context: Context, pool: Pool<Client>): Promise<void> {
+    public async handlePullRequest(context: Context, pool: Pool): Promise<void> {
         context.log(`Pull request url: ${context.payload.pull_request.url}`);
         await this.doAssign(context, true, pool);
     }
 
-    public async doAssign(context: Context, isPR: boolean, pool: Pool<Client>): Promise<void> {
+    public async doAssign(context: Context, isPR: boolean, pool: Pool): Promise<void> {
         context.log("Getting auto_assign.yml ...");
         const config: IAppConfig | null = await context.config<IAppConfig | null>("auto_assign.yml");
         if (!config) {
@@ -122,7 +121,7 @@ export class Handler {
         return queue;
     }
 
-    private getAppStorage(scope: string = "", pool: Pool<Client>): IAppStorage {
+    private getAppStorage(scope: string = "", pool: Pool): IAppStorage {
         if (scope === "dev") {
             if (!this._dbMock) {
                 this._dbMock = new DataBaseMock();
