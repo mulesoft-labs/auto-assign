@@ -1,9 +1,20 @@
-node_modules
-npm-debug.log
+# Probot
 *.pem
 !mock-cert.pem
 .env
-coverage
+
+# npm
+node_modules
+npm-debug.log
+
+# Typescript compilation output directory
 lib
+
+# Jest
+coverage
+
+# IntelliJ IDEA
 .idea
 
+# macOS
+.DS_Store
