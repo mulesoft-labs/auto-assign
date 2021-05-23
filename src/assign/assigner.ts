@@ -1,4 +1,6 @@
 import { Context } from "probot";
+import { User } from "@octokit/graphql-schema";
+
 import { Queue } from "../queue/queue";
 import { getOwner } from "../util";
 
@@ -43,14 +45,14 @@ export class Assigner {
         this.context.log(`The ${isPR ? "PR" : "issue"} created by ${owner} will be assign to: ${reviewer}`);
         // get user
         await this.context.octokit
-            .graphql(userQuery, {
+            .graphql<{ user: User }>(userQuery, {
                 member: reviewer,
             })
-            .then((res) => {
+            .then((response) => {
                 this.context.octokit
                     .graphql(addAssignee, {
                         id: isPR ? this.context.payload.pull_request.node_id : this.context.payload.issue.node_id,
-                        assigneeIds: [(res as any).user.id],
+                        assigneeIds: [response.user.id],
                     })
                     .catch((err) => {
                         this.context.log(err.message); // something bad happened

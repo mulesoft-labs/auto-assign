@@ -1,7 +1,9 @@
 import { Context } from "probot";
+import { Label } from "@octokit/graphql-schema";
+
 import { Team } from "./assign/Team";
 
-export function includesSkipKeywords(labels: any, skipKeywords: string[]): boolean {
+export function includesSkipKeywords(labels: Label[], skipKeywords: string[]): boolean {
     const lowerCaseLabels = labels.map((x: { name: string }) => x.name.toLowerCase());
     const labelsSet = new Set(lowerCaseLabels);
     for (const skipKeyword of skipKeywords) {

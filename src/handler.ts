@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { Context } from "probot";
+import { Label } from "@octokit/graphql-schema";
 
 import { Assigner } from "./assign/assigner";
 import { Team } from "./assign/Team";
@@ -39,7 +40,7 @@ export class Handler {
         context.log("Obtained auto_assign.yml");
         const payload = context.payload;
         const labels = isPR ? payload.pull_request.labels : payload.issue.labels;
-        if (config.skipKeywords && includesSkipKeywords(labels, config.skipKeywords)) {
+        if (config.skipKeywords && includesSkipKeywords(<Label[]>labels, config.skipKeywords)) {
             context.log("skips adding reviewers");
             return;
         }
