@@ -27,7 +27,7 @@ export class Assigner {
         this.context = context;
     }
 
-    public async assign(team: Queue<string>, isPR: boolean) {
+    public async assign(team: Queue<string>, isPR: boolean): Promise<void> {
         try {
             const owner = getOwner(this.context, isPR);
             await this.doAssign(team, owner, isPR);
@@ -36,7 +36,7 @@ export class Assigner {
         }
     }
 
-    public async doAssign(team: Queue<string>, owner: string, isPR: boolean) {
+    public async doAssign(team: Queue<string>, owner: string, isPR: boolean): Promise<void> {
         const reviewer = team.next(owner);
         if (!reviewer) {
             this.context.log("there is no candidate to review");

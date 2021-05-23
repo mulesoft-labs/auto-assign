@@ -7,18 +7,14 @@
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run dev",
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
+            "skipFiles": ["<node_internals>/**"]
         },
         {
             "name": "Attach by Process ID",
             "type": "pwa-node",
             "request": "attach",
             "processId": "${command:PickProcess}",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "restart": true
         }
     ]

@@ -6,7 +6,7 @@ import { Handler } from "./handler";
 const pool = new PoolFactory().createNewPool();
 const handler = new Handler();
 
-export = (app: Probot) => {
+export = (app: Probot): void => {
     app.log("App started");
 
     app.on("pull_request.opened", async (context) => {

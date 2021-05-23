@@ -19,7 +19,7 @@ export class DataBaseMock implements IAppStorage {
         });
     }
 
-    public setTeamQueue(queueDB: QueueDB) {
+    public setTeamQueue(queueDB: QueueDB): void {
         let found: boolean = false;
 
         for (let i = 0; i < this._repositoriesState.length; i++) {
@@ -36,7 +36,5 @@ export class DataBaseMock implements IAppStorage {
         if (!found) {
             this._repositoriesState.push(queueDB);
         }
-
-        return queueDB;
     }
 }

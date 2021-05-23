@@ -35,7 +35,7 @@ export class DataBasePostgreSQL implements IAppStorage {
         });
     }
 
-    public async setTeamQueue(queueDB: QueueDB) {
+    public async setTeamQueue(queueDB: QueueDB): Promise<void> {
         // validate if the register already exists in DB
         const preExists = await this.getTeamQueue(queueDB.repo, queueDB.teamName);
 

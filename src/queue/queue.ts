@@ -23,7 +23,7 @@ export class Queue<T> {
         return this._head.value;
     }
 
-    public proceed() {
+    public proceed(): void {
         if (this._head) {
             this._head = this._head.next;
         }
@@ -60,14 +60,14 @@ export class Queue<T> {
         return true;
     }
 
-    public toBack(t: T) {
+    public toBack(t: T): void {
         if (this.contains(t)) {
             this.remove(t);
             this.append(t);
         }
     }
 
-    public remove(val: T) {
+    public remove(val: T): void {
         const del = this.get(val);
         if (del) {
             if (this._length === 1) {
