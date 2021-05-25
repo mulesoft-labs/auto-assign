@@ -3,10 +3,10 @@ import { Probot } from "probot";
 import { PoolFactory } from "./database/PoolFactory";
 import { Handler } from "./handler";
 
-const pool = new PoolFactory().createNewPool();
-const handler = new Handler();
-
 export = (app: Probot): void => {
+    const pool = new PoolFactory().createNewPool();
+    const handler = new Handler();
+
     app.log("App started");
 
     app.on("pull_request.opened", async (context) => {

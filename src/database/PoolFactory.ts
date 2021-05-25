@@ -5,6 +5,7 @@ export class PoolFactory {
         return new Pool({
             // pg.Client options
             connectionString: process.env.DATABASE_URL, // e.g. postgres://user:password@host:5432/database
+            ssl: process.env.NODE_ENV === 'development' ? false : undefined,
 
             // pg.Pool options
             connectionTimeoutMillis: 5000,
