@@ -16,8 +16,7 @@
         "dev:debug": "nodemon --config nodemon.json --inspect-brk src/probot-run.ts",
         "test": "jest --coverage",
         "test:watch": "jest --coverage --watch --notify --notifyMode=change",
-        "lint": "tslint -c tslint.json --project .",
-        "lint-es": "npx eslint . --ext .js,.jsx,.ts,.tsx",
+        "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },
@@ -43,9 +42,6 @@
         "smee-client": "1.2.2",
         "ts-jest": "26.5.5",
         "ts-node": "9.1.1",
-        "tslint": "5.20.1",
-        "tslint-config-prettier": "1.18.0",
-        "tslint-config-standard": "9.0.0",
         "typescript": "4.2.4"
     },
     "engines": {
