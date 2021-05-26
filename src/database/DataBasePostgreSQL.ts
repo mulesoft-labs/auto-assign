@@ -41,7 +41,7 @@ export class DataBasePostgreSQL implements IAppStorage {
 
         let query = "INSERT INTO queue (repo, team, data) VALUES($1, $2, $3)";
         if (preExists) {
-            query = "UPDATE queue SET data = $1 WHERE repo = $2 AND team = $3";
+            query = "UPDATE queue SET data = $3 WHERE repo = $1 AND team = $2";
         }
 
         const queryParams = [queueDB.repo, queueDB.teamName, queueDB.data.toString()];
